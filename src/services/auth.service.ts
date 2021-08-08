@@ -6,9 +6,8 @@ import { UsersModel } from 'models/user.model';
 export class AuthService {
   constructor(private usersModal: UsersModel, private jwtService: JwtService) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersModal.findOne(email);
-    console.log(user);
+  async validateUser(email: string, userInfo: string): Promise<any> {
+    const user = await this.usersModal.findOne(email, userInfo);
     if (user) {
       return user;
     }
@@ -16,9 +15,10 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, password: user.password };
+    const payload = { email: user.email, name: user.name };
     return {
       access_token: this.jwtService.sign(payload),
+      userInfo: user,
     };
   }
 }

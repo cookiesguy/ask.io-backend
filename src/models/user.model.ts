@@ -14,8 +14,25 @@ export class UsersModel {
     return this.userModel.find().exec();
   }
 
-  async findOne(email: string): Promise<User> {
-    console.log(this.userModel.db.name);
-    return this.userModel.findOne({ email: email }).exec();
+  async addUser(email: string, name: string, imageUrl: string): Promise<User> {
+    const user = await this.userModel.create({
+      email: email,
+      name: name,
+      imageUrl: imageUrl,
+    });
+    return user;
+  }
+
+  async findOne(email: string, userInfo: string): Promise<User> {
+    const strings = userInfo.split(',');
+    const name = strings[0];
+    const imageUrl = strings[1];
+    const user = await this.userModel.findOne({ email: email }).exec();
+    if (user) {
+      return user;
+    } else {
+      const newUser = await this.addUser(email, name, imageUrl);
+      return newUser;
+    }
   }
 }
